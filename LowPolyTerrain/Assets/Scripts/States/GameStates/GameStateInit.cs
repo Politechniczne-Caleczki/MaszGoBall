@@ -12,14 +12,10 @@ namespace Assets.Scripts.States.GameStates
     {
         protected override IEnumerator Init()
         {
-            TerrainController terrain = GameObject.FindObjectOfType<TerrainController>();
+            //TerrainController terrain = GameObject.FindObjectOfType<TerrainController>();
 
-            yield return terrain.GenerateMesh();
-            terrain.RecalculateCollider();
-
-
-
-
+            //yield return terrain.GenerateMesh();
+            //terrain.RecalculateCollider();
             yield return base.Init();
         }
     }

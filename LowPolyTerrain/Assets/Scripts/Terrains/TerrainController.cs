@@ -43,6 +43,8 @@ namespace Assets.Scripts.Terrains
             Mesh = new Mesh();
             Mesh.subMeshCount = 3;
 
+            
+
             List<Vector3> vertices = new List<Vector3>();
             List<int>[] Triangels = new List<int>[4];
             for (int x = 0; x < 4; ++x)
@@ -91,7 +93,9 @@ namespace Assets.Scripts.Terrains
         }
         public void RecalculateCollider()
         {
+            Mesh.RecalculateBounds();
             meshCollider.sharedMesh = Mesh;
+
         }
         public void GenerateTrees()
         {

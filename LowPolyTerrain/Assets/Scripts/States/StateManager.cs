@@ -30,7 +30,8 @@ namespace Assets.Scripts.States
 
         private void Update()
         {
-            AppState._Update();
+            if(AppState!=null)
+                AppState._Update();
         }
 
         
