@@ -31,10 +31,10 @@ namespace Assets.Scripts.GameEngine.Units
         }
         private void CheckNation(Nation nation)
         {
-            if (Nation == nation)
-                Nation.AddPower(nation.Power);
-            else
-                KillPlayer(nation);
+          //  if (Nation != nation)
+                //Nation.AddPower(nation.Power);
+            //else
+            //    KillPlayer(nation);
         }
         private void KillPlayer(Nation nation)
         {
@@ -45,13 +45,15 @@ namespace Assets.Scripts.GameEngine.Units
             {
                 Debug.Log("Zabity przez moba");
             }
+            nation.Explosion();
             Nation = null;
         }
         private void AddNation(Nation nation)
         {
-            Debug.Log("Add nation" + nation);
+
             Nation = nation;
-            Tentakel.Catch(nation.transform.position);
+            Nation.Catch();
+            Tentakel.Catch(nation);
         }
         private void Shot()
         {
@@ -111,7 +113,6 @@ namespace Assets.Scripts.GameEngine.Units
                 if (Input.GetAxis("Jump") != 0)
                 {
                     Rigidbody.AddForce(new Vector3(0, 20, 0), ForceMode.Acceleration);
-                    int s = animator.GetInteger("State");
                     animator.SetInteger("State", 1);
                 }
             }
@@ -121,11 +122,6 @@ namespace Assets.Scripts.GameEngine.Units
         {
             switch(collision.gameObject.layer)
             {
-                case 9:
-                    {
-                        Touch(collision.gameObject.GetComponent<Nation>());
-                    }break;
-
                 case 13:
                     {
                         if(!CanJump)

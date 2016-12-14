@@ -6,10 +6,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.GameEngine.Units
 {
-    [RequireComponent(typeof(MeshRenderer))]
-    [RequireComponent(typeof(MeshFilter))]
-    [RequireComponent(typeof(MeshCollider))]
-    [RequireComponent(typeof(Rigidbody))]
     public class Nation: MonoBehaviour
     {
         [SerializeField]
@@ -18,7 +14,12 @@ namespace Assets.Scripts.GameEngine.Units
         [SerializeField]
         private int power;
 
-        private bool Active = true;
+        [SerializeField]
+        public Rigidbody Rigidbody;
+
+        [SerializeField]
+        public BoxCollider Collider;
+
 
         public Color Color { get { return color; } protected set { color = value; } }
 
@@ -43,23 +44,34 @@ namespace Assets.Scripts.GameEngine.Units
             return base.GetHashCode();
         }
 
-        private void OnCollisionEnter(Collision collision)
+        protected virtual void OnCollisionEnter(Collision collision)
         {
-            if(collision.gameObject.layer == 8)
+            if (collision.gameObject.layer == 8)
             {
-                if (Active)
-                {
-                    collision.gameObject.GetComponent<Player>().Touch(this);
-                    Explosion();
-                    Active = false;
-                }
+                 collision.gameObject.GetComponent<Player>().Touch(this);
+                //Explosion();
             }
         }
 
-        private void Explosion()
+        public void Explosion()
         {
             gameObject.SetActive(false);
             //throw new NotImplementedException();
+        }
+
+        public virtual void Catch()
+        {
+            enabled = false;
+            Collider.enabled = false;
+            Rigidbody.useGravity = false;
+        }
+
+        public virtual void Shot()
+        {
+            enabled = true;
+            Collider.enabled = true;
+            Rigidbody.useGravity = true;
+            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
         }
 
         public static bool operator ==(Nation n1, Nation n2)
