@@ -19,13 +19,18 @@ namespace Assets.Scripts.GameEngine.Units
 
         public string Name { get; private set; }
         public Nation Nation { get; private set; }
+        public Nation OldNation { get; private set; }
         private bool CanJump { get;  set; }
         Vector3 NewPosition { get; set; }
 
+
         public void Touch(Nation nation)
         {
-            if (Nation == null)
+            if (Nation == null && Tentakel.IsReady)
+            {
+                if(OldNation!=nation)
                 AddNation(nation);
+            }
             else
                 CheckNation(nation);
         }
@@ -50,6 +55,7 @@ namespace Assets.Scripts.GameEngine.Units
         }
         private void AddNation(Nation nation)
         {
+            Debug.Log("Add nation");
 
             Nation = nation;
             Nation.Catch();
@@ -58,7 +64,6 @@ namespace Assets.Scripts.GameEngine.Units
         private void Shot()
         {
             Tentakel.Shot();
-            Nation = null;
         }
         private void Start()
         {
@@ -69,6 +74,13 @@ namespace Assets.Scripts.GameEngine.Units
         private void FixedUpdate()
         {
             transform.position = NewPosition;
+
+
+            if (Tentakel.IsReady)
+            {
+                OldNation = Nation;
+                Nation = null;
+            }
         }
 
         private void Update()

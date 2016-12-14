@@ -56,7 +56,7 @@ namespace Assets.Scripts.GameEngine.Units
         public void Explosion()
         {
             gameObject.SetActive(false);
-            //throw new NotImplementedException();
+
         }
 
         public virtual void Catch()
@@ -74,26 +74,13 @@ namespace Assets.Scripts.GameEngine.Units
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
         }
 
-        public static bool operator ==(Nation n1, Nation n2)
+        public bool EQ(Nation n)
         {
-            if (ReferenceEquals(n1, n2))
-                return true;
-
-            if ((object)n1 == null || (object)n2 == null)
-                return false; 
-
-            return n1.Color == n2.Color;
-        }
-
-        public static bool operator !=(Nation n1, Nation n2)
-        {
-            if (!ReferenceEquals(n1, n2))
-                return true;
-
-            if ((object)n1 == null || (object)n2 == null)
+            if (n == null)
                 return false;
 
-            return n1.Color != n2.Color;
+            return Color == n.Color;
+
         }
     }
 }

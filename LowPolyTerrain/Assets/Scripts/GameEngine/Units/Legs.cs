@@ -10,7 +10,12 @@ namespace Assets.Scripts.GameEngine.Units
     {
         private void Step()
         {
-            Rigidbody.AddForce(Quaternion.Euler(transform.eulerAngles) * new Vector3(0, 0.5f, 1.5f), ForceMode.Impulse);
+            Rigidbody.AddForce(Quaternion.Euler(transform.eulerAngles) * new Vector3(0, 0.5f, 1.3f), ForceMode.Impulse);
+        }
+
+        private void Update()
+        {
+            Rigidbody.AddForce(Quaternion.Euler(transform.eulerAngles) * new Vector3(0, 0, 3f), ForceMode.Force);
         }
     }
 }

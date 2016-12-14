@@ -17,18 +17,32 @@ namespace Assets.Scripts.GameEngine.Units
 
         private Nation ChatchNation { get; set; }
 
+        public bool IsReady
+        {
+            get
+            {
+                return ChatchNation == null;
+            }
+        }
+
+
         
 
         private void Start()
         {
             animator.SetInteger("State", 0);
+            ChatchNation = null;
         }
 
 
         public void Catch(Nation nation)
         {
-            animator.SetInteger("State", 1);
-            ChatchNation = nation;
+            if (ChatchNation == null)
+            {
+                animator.SetInteger("State", 1);
+                ChatchNation = nation;
+            }
+            else throw new Exception("Tantakel not free");
             //nation.transform.position = Vector3.zero;
         }
 
