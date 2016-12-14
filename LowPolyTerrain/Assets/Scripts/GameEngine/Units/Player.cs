@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,11 +12,15 @@ namespace Assets.Scripts.GameEngine.Units
     {
         [SerializeField]
         private Rigidbody Rigidbody;
-
+        [SerializeField]
+        private Tentakel Tentakel;
+        [SerializeField]
+        private Animator animator;
 
         public string Name { get; private set; }
         public Nation Nation { get; private set; }
         private bool CanJump { get;  set; }
+        Vector3 NewPosition { get; set; }
 
         public void Touch(Nation nation)
         {
@@ -44,21 +49,44 @@ namespace Assets.Scripts.GameEngine.Units
         }
         private void AddNation(Nation nation)
         {
+            Debug.Log("Add nation" + nation);
             Nation = nation;
-            Debug.Log("Set nation" + Nation.name);
+            Tentakel.Catch(nation.transform.position);
+        }
+        private void Shot()
+        {
+            Tentakel.Shot();
+            Nation = null;
         }
         private void Start()
         {
             gameObject.layer = 8;
             CanJump = true;
         }
+
+        private void FixedUpdate()
+        {
+            transform.position = NewPosition;
+        }
+
         private void Update()
         { 
-            Vector3 position = transform.position;
-            transform.position = position + (Quaternion.Euler(transform.eulerAngles) * new Vector3(Input.GetAxis("Horizontal") / 500, 0, Input.GetAxis("Vertical")/350));
-            
-            if(Input.GetAxis("Jump")!=0)
-                Rigidbody.AddForce(new Vector3(0,0.1f, 0), ForceMode.Impulse);
+            NewPosition = transform.position;
+
+            NewPosition += (Quaternion.Euler(transform.eulerAngles) * new Vector3(Input.GetAxis("Horizontal") / 500, 0, Input.GetAxis("Vertical")/100));
+
+            if (Input.GetAxis("Vertical") != 0)
+            {
+                animator.SetBool("Run", true);
+                if (animator.GetInteger("State") != 1)
+                    animator.SetInteger("State", 2);
+            }
+            else
+            {
+                animator.SetBool("Run", false);
+                animator.SetInteger("State", 0);
+            }
+
 
             if (Input.GetAxis("Fire2") != 0)
             {
@@ -67,30 +95,87 @@ namespace Assets.Scripts.GameEngine.Units
                 transform.eulerAngles = euler;
             }
 
+            if (Nation != null)
+            {
+                if (Input.GetAxis("Fire1") != 0)
+                    Shot();
+            }
+
             Jump();
         }
 
         private void Jump()
         {
             if (CanJump)
+            {
                 if (Input.GetAxis("Jump") != 0)
                 {
-                    Rigidbody.AddForce(new Vector3(0, 1, 0), ForceMode.Impulse);
-                    CanJump = false;
+                    Rigidbody.AddForce(new Vector3(0, 20, 0), ForceMode.Acceleration);
+                    int s = animator.GetInteger("State");
+                    animator.SetInteger("State", 1);
                 }
+            }
         }
 
         private void OnCollisionEnter(Collision collision)
-        {            
-            if(!CanJump && collision.gameObject.layer == 13)
+        {
+            switch(collision.gameObject.layer)
+            {
+                case 9:
+                    {
+                        Touch(collision.gameObject.GetComponent<Nation>());
+                    }break;
+
+                case 13:
+                    {
+                        if(!CanJump)
+                            StartCoroutine(JumpDelay());
+                    }
+                    break;
+            }
+        }
+
+        private IEnumerator JumpDelay()
+        {
+            if (!CanJump)
+            {
+                yield return new WaitForSeconds(0.1f);
                 CanJump = true;
+            }
         }
 
         private void OnCollisionExit(Collision collision)
         {
-            if (collision.gameObject.layer == 13)
-                CanJump = false;
+            switch (collision.gameObject.layer)
+            {
+                case 13:
+                    {
+                        CanJump = false;
+                    }
+                    break;
+            }
         }
 
+        private void OnCollisionStay(Collision collision)
+        {
+            switch (collision.gameObject.layer)
+            {
+                case 13:
+                    {
+                        Jump();
+                    }
+                    break;
+            }
+        }
+
+
+        public void EndJump()
+        {
+            if(animator.GetBool("Run"))
+                animator.SetInteger("State", 2);
+            else
+                animator.SetInteger("State", 0);
+
+        }
     }
 }

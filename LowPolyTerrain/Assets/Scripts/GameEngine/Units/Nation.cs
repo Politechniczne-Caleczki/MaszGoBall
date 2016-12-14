@@ -18,6 +18,8 @@ namespace Assets.Scripts.GameEngine.Units
         [SerializeField]
         private int power;
 
+        private bool Active = true;
+
         public Color Color { get { return color; } protected set { color = value; } }
 
         public string Name { get { return name; } protected set { name = value; } }
@@ -45,14 +47,19 @@ namespace Assets.Scripts.GameEngine.Units
         {
             if(collision.gameObject.layer == 8)
             {
-                collision.gameObject.GetComponent<Player>().Touch(this);
-                Explosion();
+                if (Active)
+                {
+                    collision.gameObject.GetComponent<Player>().Touch(this);
+                    Explosion();
+                    Active = false;
+                }
             }
         }
 
         private void Explosion()
         {
-            throw new NotImplementedException();
+            gameObject.SetActive(false);
+            //throw new NotImplementedException();
         }
 
         public static bool operator ==(Nation n1, Nation n2)
@@ -68,11 +75,11 @@ namespace Assets.Scripts.GameEngine.Units
 
         public static bool operator !=(Nation n1, Nation n2)
         {
-            if (ReferenceEquals(n1, n2))
-                return false;
+            if (!ReferenceEquals(n1, n2))
+                return true;
 
             if ((object)n1 == null || (object)n2 == null)
-                return true;
+                return false;
 
             return n1.Color != n2.Color;
         }

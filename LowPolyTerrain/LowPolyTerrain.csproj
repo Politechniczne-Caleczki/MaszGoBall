@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\GameEngine\Units\Creature.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Nation.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Player.cs" />
+    <Compile Include="Assets\Scripts\GameEngine\Units\Tentakel.cs" />
     <Compile Include="Assets\Scripts\Menu\Container.cs" />
     <Compile Include="Assets\Scripts\Menu\StartGame.cs" />
     <Compile Include="Assets\Scripts\States\ApplicationState.cs" />

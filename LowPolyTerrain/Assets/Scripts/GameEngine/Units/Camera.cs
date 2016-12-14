@@ -19,7 +19,7 @@ namespace Assets.Scripts.GameEngine.Units
 
         private void Start()
         {
-            Offset = new Vector3(0, 0.03f, -0.15f);
+            Offset = new Vector3(0, 0.05f, -0.15f);
             Angle = Vector3.zero;
         }
 
@@ -35,8 +35,8 @@ namespace Assets.Scripts.GameEngine.Units
             if (Offset.z < -1.5f)
                 Offset.z = -1.5f;
 
-            Angle.y -= Input.GetAxis("Mouse X");
-            Angle.x += Input.GetAxis("Mouse Y");
+            Angle.y += Input.GetAxis("Mouse X")*2;
+            Angle.x += Input.GetAxis("Mouse Y")*2;
             if (Angle.x > 90)
                 Angle.x = 90;
 

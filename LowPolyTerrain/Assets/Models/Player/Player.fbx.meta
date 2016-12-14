@@ -1,33 +1,35 @@
 fileFormatVersion: 2
 guid: aeab7231b96ebe943aed1914f300eec0
-timeCreated: 1481637035
+timeCreated: 1481673713
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: Armature_001
-    100002: //RootNode
-    100004: body_001
-    100006: Bone
-    100008: Footight
-    100010: FootLeft
-    100012: LowerLeft
-    100014: LowerRight
+    100002: body_001
+    100004: Bone
+    100006: Footight
+    100008: FootLeft
+    100010: LowerLeft
+    100012: LowerRight
+    100014: //RootNode
     100016: UpperLeft
     100018: UpperRight
     400000: Armature_001
-    400002: //RootNode
-    400004: body_001
-    400006: Bone
-    400008: Footight
-    400010: FootLeft
-    400012: LowerLeft
-    400014: LowerRight
+    400002: body_001
+    400004: Bone
+    400006: Footight
+    400008: FootLeft
+    400010: LowerLeft
+    400012: LowerRight
+    400014: //RootNode
     400016: UpperLeft
     400018: UpperRight
     4300000: body_001
     7400000: Default Take
-    7400002: Armature_001Action_007
+    7400002: Jump
+    7400004: Run
+    7400006: stay
     9500000: //RootNode
     13700000: body_001
   materials:
@@ -55,6 +57,109 @@ ModelImporter:
       name: Default Take
       takeName: Default Take
       firstFrame: 0
+      lastFrame: 67
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature_001
+        weight: 1
+      - path: Armature_001/Bone
+        weight: 1
+      - path: Armature_001/UpperLeft
+        weight: 1
+      - path: Armature_001/UpperLeft/LowerLeft
+        weight: 1
+      - path: Armature_001/UpperLeft/LowerLeft/FootLeft
+        weight: 1
+      - path: Armature_001/UpperRight
+        weight: 1
+      - path: Armature_001/UpperRight/LowerRight
+        weight: 1
+      - path: Armature_001/UpperRight/LowerRight/Footight
+        weight: 1
+      - path: body_001
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Jump
+      takeName: Jump
+      firstFrame: -1
+      lastFrame: 19
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 1
+        functionName: EndJump
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature_001
+        weight: 1
+      - path: Armature_001/Bone
+        weight: 1
+      - path: Armature_001/UpperLeft
+        weight: 1
+      - path: Armature_001/UpperLeft/LowerLeft
+        weight: 1
+      - path: Armature_001/UpperLeft/LowerLeft/FootLeft
+        weight: 1
+      - path: Armature_001/UpperRight
+        weight: 1
+      - path: Armature_001/UpperRight/LowerRight
+        weight: 1
+      - path: Armature_001/UpperRight/LowerRight/Footight
+        weight: 1
+      - path: body_001
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Run
+      takeName: Run
+      firstFrame: -1
       lastFrame: 79
       wrapMode: 0
       orientationOffsetY: 0
@@ -100,10 +205,10 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature_001Action_007
-      takeName: Armature_001Action_007
-      firstFrame: -1
-      lastFrame: 79
+      name: stay
+      takeName: stay
+      firstFrame: 1
+      lastFrame: 1
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -146,13 +251,13 @@ ModelImporter:
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    isReadable: 0
+      additiveReferencePoseFrame: 1
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
