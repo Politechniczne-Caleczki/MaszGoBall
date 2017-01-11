@@ -16,30 +16,25 @@ namespace Assets.Scripts.GameEngine.Units
         private Tentakel Tentakel;
         [SerializeField]
         private Animator animator;
+        [SerializeField]
+        private Light light;
 
         public string Name { get; private set; }
-        public Nation Nation { get; private set; }
-        public Nation OldNation { get; private set; }
+        public NationType NationType { get; private set; }
         private bool CanJump { get;  set; }
         Vector3 NewPosition { get; set; }
-
-
         public void Touch(Nation nation)
         {
-            if (Nation == null && Tentakel.IsReady)
+            if(NationType== NationType.None)
             {
-                if(OldNation!=nation)
                 AddNation(nation);
+                return;
             }
+
+            if (nation.NationType == NationType)
+                AddNation(nation);
             else
-                CheckNation(nation);
-        }
-        private void CheckNation(Nation nation)
-        {
-          //  if (Nation != nation)
-                //Nation.AddPower(nation.Power);
-            //else
-            //    KillPlayer(nation);
+                KillPlayer(nation);
         }
         private void KillPlayer(Nation nation)
         {
@@ -51,15 +46,26 @@ namespace Assets.Scripts.GameEngine.Units
                 Debug.Log("Zabity przez moba");
             }
             nation.Explosion();
-            Nation = null;
         }
         private void AddNation(Nation nation)
         {
-            Debug.Log("Add nation");
-
-            Nation = nation;
-            Nation.Catch();
-            Tentakel.Catch(nation);
+            if (Tentakel.IsReady && nation.CanCath)
+            {
+                Debug.Log("Add nation: " + nation.NationType);
+                NationType = nation.NationType;
+                nation.Catch();
+                Tentakel.Catch(nation);
+                light.enabled = true;
+                switch(nation.NationType)
+                {
+                    case NationType.Red:
+                        light.color = Color.red;
+                        break;
+                    case NationType.Blue:
+                        light.color = Color.blue;
+                        break;
+                }
+            }
         }
         private void Shot()
         {
@@ -69,20 +75,30 @@ namespace Assets.Scripts.GameEngine.Units
         {
             gameObject.layer = 8;
             CanJump = true;
-        }
+            Tentakel.OnEndShot = () =>
+            {
+                switch(NationType)
+                {
+                    case NationType.Red:
+                        {
+                            NationType = NationType.Blue;
+                            light.color = Color.blue;
+                        }
+                        break;
 
+                    case NationType.Blue:
+                        {
+                            NationType = NationType.Red;
+                            light.color = Color.red;
+                        }
+                        break;
+                }
+            };
+        }
         private void FixedUpdate()
         {
             transform.position = NewPosition;
-
-
-            if (Tentakel.IsReady)
-            {
-                OldNation = Nation;
-                Nation = null;
-            }
         }
-
         private void Update()
         { 
             NewPosition = transform.position;
@@ -109,7 +125,7 @@ namespace Assets.Scripts.GameEngine.Units
                 transform.eulerAngles = euler;
             }
 
-            if (Nation != null)
+            if (!Tentakel.IsReady)
             {
                 if (Input.GetAxis("Fire1") != 0)
                     Shot();
@@ -117,7 +133,6 @@ namespace Assets.Scripts.GameEngine.Units
 
             Jump();
         }
-
         private void Jump()
         {
             if (CanJump)
@@ -129,7 +144,6 @@ namespace Assets.Scripts.GameEngine.Units
                 }
             }
         }
-
         private void OnCollisionEnter(Collision collision)
         {
             switch(collision.gameObject.layer)
@@ -142,7 +156,6 @@ namespace Assets.Scripts.GameEngine.Units
                     break;
             }
         }
-
         private IEnumerator JumpDelay()
         {
             if (!CanJump)
@@ -151,7 +164,6 @@ namespace Assets.Scripts.GameEngine.Units
                 CanJump = true;
             }
         }
-
         private void OnCollisionExit(Collision collision)
         {
             switch (collision.gameObject.layer)
@@ -163,7 +175,6 @@ namespace Assets.Scripts.GameEngine.Units
                     break;
             }
         }
-
         private void OnCollisionStay(Collision collision)
         {
             switch (collision.gameObject.layer)
@@ -175,8 +186,6 @@ namespace Assets.Scripts.GameEngine.Units
                     break;
             }
         }
-
-
         public void EndJump()
         {
             if(animator.GetBool("Run"))

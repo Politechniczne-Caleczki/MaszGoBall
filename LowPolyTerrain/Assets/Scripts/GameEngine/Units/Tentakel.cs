@@ -15,43 +15,40 @@ namespace Assets.Scripts.GameEngine.Units
         [SerializeField]
         private Transform Handle;
 
-        private Nation ChatchNation { get; set; }
+        private Nation Nation { get; set; }
+
+        public Action OnEndShot { get; set; }
 
         public bool IsReady
         {
             get
             {
-                return ChatchNation == null;
+                return Nation == null;
             }
         }
-
-
-        
 
         private void Start()
         {
             animator.SetInteger("State", 0);
-            ChatchNation = null;
+            Nation = null;
         }
-
 
         public void Catch(Nation nation)
         {
-            if (ChatchNation == null)
+            if (Nation == null)
             {
                 animator.SetInteger("State", 1);
-                ChatchNation = nation;
+                Nation = nation;
             }
             else throw new Exception("Tantakel not free");
-            //nation.transform.position = Vector3.zero;
         }
 
         public void Update()
         {
-            if (ChatchNation != null)
+            if (Nation != null)
             {
-                ChatchNation.transform.position = Handle.position;
-                ChatchNation.transform.eulerAngles = Handle.eulerAngles;
+                Nation.transform.position = Handle.position;
+                Nation.transform.eulerAngles = Handle.eulerAngles;
             }
         }
 
@@ -59,8 +56,6 @@ namespace Assets.Scripts.GameEngine.Units
         {
             yield return null;
         }
-
-
 
         public void Shot()
         {
@@ -70,11 +65,12 @@ namespace Assets.Scripts.GameEngine.Units
 
         public void EndShot()
         {
-            if (ChatchNation)
+            if (Nation)
             {
-                ChatchNation.Rigidbody.AddForce(Quaternion.Euler(0, transform.parent.transform.eulerAngles.y, 0) * new Vector3(0, 1.5f, 1), ForceMode.Impulse);
-                ChatchNation.Shot();
-                ChatchNation = null;
+                Nation.Rigidbody.AddForce(Quaternion.Euler(0, transform.parent.transform.eulerAngles.y, 0) * new Vector3(0, 1.5f, 1), ForceMode.Impulse);
+                Nation.Shot();
+                Nation = null;
+                OnEndShot();
             }
         }
 

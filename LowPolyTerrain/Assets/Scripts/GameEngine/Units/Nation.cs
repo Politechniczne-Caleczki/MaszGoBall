@@ -9,78 +9,51 @@ namespace Assets.Scripts.GameEngine.Units
     public class Nation: MonoBehaviour
     {
         [SerializeField]
-        private Color color;
-
-        [SerializeField]
-        private int power;
-
+        private NationType nationType;
         [SerializeField]
         public Rigidbody Rigidbody;
-
         [SerializeField]
         public BoxCollider Collider;
-
-
-        public Color Color { get { return color; } protected set { color = value; } }
-
+        public NationType NationType { get { return nationType; } protected set { nationType = value; } }
         public string Name { get { return name; } protected set { name = value; } }
-        public int Power { get { return power; } private set { power = value; } }
-
-        public void AddPower(int power)
+        public bool CanCath { get; private set; }
+        private void Start()
         {
-            Power += power;
-            Debug.Log("Add power: " + Power);
+            CanCath = true;
         }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Nation)
-                return (obj as Nation).Color == this.Color;
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         protected virtual void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.layer == 8)
+            switch(collision.gameObject.layer)
             {
-                 collision.gameObject.GetComponent<Player>().Touch(this);
-                //Explosion();
+                case 8:
+                    {
+                        collision.gameObject.GetComponent<Player>().Touch(this);
+                    }
+                    break;
+                case 13:
+                    {
+                        if (!CanCath)
+                            CanCath = true;
+                    }break;
             }
         }
-
         public void Explosion()
         {
             gameObject.SetActive(false);
 
         }
-
         public virtual void Catch()
         {
-            enabled = false;
+            CanCath = enabled = false;
             Collider.enabled = false;
             Rigidbody.useGravity = false;
         }
-
         public virtual void Shot()
         {
             enabled = true;
             Collider.enabled = true;
             Rigidbody.useGravity = true;
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-        }
-
-        public bool EQ(Nation n)
-        {
-            if (n == null)
-                return false;
-
-            return Color == n.Color;
-
         }
     }
 }

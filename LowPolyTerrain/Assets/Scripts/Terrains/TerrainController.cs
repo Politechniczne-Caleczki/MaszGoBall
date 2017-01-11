@@ -89,7 +89,7 @@ namespace Assets.Scripts.Terrains
                 Mesh.SetTriangles(Triangels[x], x);
             Mesh.RecalculateBounds();
             Mesh.RecalculateNormals();
-            Mesh.Optimize();
+            ;
         }
         public void RecalculateCollider()
         {
