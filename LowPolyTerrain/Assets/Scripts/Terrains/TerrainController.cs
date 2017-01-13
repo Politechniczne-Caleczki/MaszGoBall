@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using System;
 
 namespace Assets.Scripts.Terrains
 {
@@ -43,7 +43,7 @@ namespace Assets.Scripts.Terrains
         {
             get { return meshFilter; }
         }
-        public IEnumerator GenerateTerrain()
+        public IEnumerator GenerateTerrain(Action<float> onProgress)
         {
             Mesh = new Mesh();
             Mesh.subMeshCount = 3;
@@ -54,6 +54,7 @@ namespace Assets.Scripts.Terrains
                 Triangels[x] = new List<int>();
 
             int index = 0;
+            float progress = 0;
 
             for (int x = 0; x < Texture.width - 1; ++x)
             {
@@ -85,6 +86,10 @@ namespace Assets.Scripts.Terrains
                     Triangels[i].Add(index - 1);
                     Triangels[i].Add(index - 3);
                     Triangels[i].Add(index - 2);
+
+                    onProgress(progress / (texture.width * texture.height));
+
+                    ++progress;
                 }
                 yield return null;
             }
@@ -100,6 +105,8 @@ namespace Assets.Scripts.Terrains
             transform.position -= new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size);
             transform.localScale = new Vector3(size, 1, size);
 
+            RecalculateCollider();
+
         }
         public void RecalculateCollider()
         {
@@ -109,11 +116,11 @@ namespace Assets.Scripts.Terrains
 
         private void AddTree(Vector3 center)
         {
-            if (Random.Range(0, 2) == 0)
+            if (UnityEngine.Random.Range(0, 2) == 0)
             {
-                GameObject tree = Instantiate(Trees[Random.Range(0, 2)], transform);
-                tree.transform.position = center + new Vector3(Random.Range(-size, size), .12f, Random.Range(-size, size));
-                tree.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
+                GameObject tree = Instantiate(Trees[UnityEngine.Random.Range(0, 2)], transform);
+                tree.transform.position = center + new Vector3(UnityEngine.Random.Range(-size, size), .12f, UnityEngine.Random.Range(-size, size));
+                tree.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
                 tree.transform.localScale = new Vector3(1 / size, 1, 1 / size);
                 tree.isStatic = true;
                 tree.layer = 14;

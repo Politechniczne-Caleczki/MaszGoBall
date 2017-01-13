@@ -20,6 +20,8 @@ namespace Assets.Scripts.States
             yield return SceneManager.LoadSceneAsync(2);
 
             yield return Activate<GameStateInit>();
+            yield return Deactivate<GameStateInit>();
+                
 
             yield return base.Init();
         }

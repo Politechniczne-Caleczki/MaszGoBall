@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.Scripts.Terrains;
 using UnityEngine;
+using Assets.Scripts.GUI.Game;
 
 namespace Assets.Scripts.States.GameStates
 {
@@ -14,9 +15,14 @@ namespace Assets.Scripts.States.GameStates
         {
             TerrainController terrain = GameObject.FindObjectOfType<TerrainController>();
 
-            yield return terrain.GenerateTerrain();
-            terrain.RecalculateCollider();
+            yield return terrain.GenerateTerrain(LoadingPanel.OnProgress);
             yield return base.Init();
+        }
+
+        protected override IEnumerator End()
+        {
+            LoadingPanel.Disable();
+            return base.End();
         }
     }
 }
