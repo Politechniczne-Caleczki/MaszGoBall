@@ -11,7 +11,12 @@ namespace Assets.Scripts.Terrains
     [RequireComponent(typeof(Rigidbody))]
     public class TerrainController : MonoBehaviour
     {
-        private float size = 15;
+        private float height = .75f;
+
+        private float size = .25f;
+
+        [SerializeField]
+        List<GameObject> Trees;
 
         [SerializeField]
         private MeshFilter meshFilter;
@@ -38,12 +43,10 @@ namespace Assets.Scripts.Terrains
         {
             get { return meshFilter; }
         }
-        public IEnumerator GenerateMesh()
+        public IEnumerator GenerateTerrain()
         {
             Mesh = new Mesh();
             Mesh.subMeshCount = 3;
-
-            
 
             List<Vector3> vertices = new List<Vector3>();
             List<int>[] Triangels = new List<int>[4];
@@ -61,10 +64,10 @@ namespace Assets.Scripts.Terrains
                     float h3 = Texture.GetPixel(x, z + 1).grayscale;
                     float h4 = Texture.GetPixel(x + 1, z + 1).grayscale;
 
-                    vertices.Add(new Vector3(x, h1 * size, z));
-                    vertices.Add(new Vector3(x + 1, h2 * size, z));
-                    vertices.Add(new Vector3(x, h3 * size, z + 1));
-                    vertices.Add(new Vector3(x + 1, h4 * size, z + 1));
+                    vertices.Add(new Vector3(x, h1 * height, z));
+                    vertices.Add(new Vector3(x + 1, h2 * height, z));
+                    vertices.Add(new Vector3(x, h3 * height, z + 1));
+                    vertices.Add(new Vector3(x + 1, h4 * height, z + 1));
 
                     index += 4;
 
@@ -73,6 +76,9 @@ namespace Assets.Scripts.Terrains
                     Triangels[i].Add(index - 3);
                     Triangels[i].Add(index - 4);
                     Triangels[i].Add(index - 2);
+                    if (i == 0)
+                        AddTree((vertices[index - 3] + vertices[index - 4] + vertices[index-2]) / 3);
+
 
                     i = (int)((h2 + h3 + h4) / 3 / 0.333f);
 
@@ -87,19 +93,32 @@ namespace Assets.Scripts.Terrains
             Mesh.vertices = vertices.ToArray();
             for (int x = 0; x < 3; ++x)
                 Mesh.SetTriangles(Triangels[x], x);
-            Mesh.RecalculateBounds();
+
             Mesh.RecalculateNormals();
-            ;
+            Mesh.RecalculateBounds();
+
+            transform.position -= new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size);
+            transform.localScale = new Vector3(size, 1, size);
+
         }
         public void RecalculateCollider()
         {
-            Mesh.RecalculateBounds();
-            meshCollider.sharedMesh = Mesh;
-
+            meshCollider.sharedMesh = null;
+            meshCollider.sharedMesh = MeshFilter.mesh;
         }
-        public void GenerateTrees()
+
+        private void AddTree(Vector3 center)
         {
-
+            if (Random.Range(0, 2) == 0)
+            {
+                GameObject tree = Instantiate(Trees[Random.Range(0, 2)], transform);
+                tree.transform.position = center + new Vector3(Random.Range(-size, size), .12f, Random.Range(-size, size));
+                tree.transform.eulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
+                tree.transform.localScale = new Vector3(1 / size, 1, 1 / size);
+                tree.isStatic = true;
+                tree.layer = 14;
+            }
         }
+
     }
 }

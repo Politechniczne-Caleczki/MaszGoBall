@@ -45,7 +45,7 @@ namespace Assets.Scripts.GameEngine.Units
 
             if (Input.GetAxis("Fire2") == 0)
             {
-                Angle.y += Input.GetAxis("Rotate");
+                Angle.y += Input.GetAxis("Rotate")*2;
 
                 Vector3 euler = Player.transform.eulerAngles;
                 Player.transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, transform.eulerAngles.y, ref currentVelocity, 0.1f), euler.z);

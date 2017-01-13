@@ -27,16 +27,29 @@ namespace Assets.Scripts.GameEngine.Units
             {
                 case 8:
                     {
-                        collision.gameObject.GetComponent<Player>().Touch(this);
+                        if(CanCath)
+                            collision.gameObject.GetComponent<Player>().Touch(this);
                     }
                     break;
-                case 13:
-                    {
-                        if (!CanCath)
-                            CanCath = true;
-                    }break;
             }
         }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            switch (collision.gameObject.layer)
+            {
+                case 8:
+                    {
+                        if (!CanCath)
+                        {
+                            CanCath = true;
+                            Debug.Log("CanCath");
+                        }
+                    }
+                    break;
+            }
+        }
+
         public void Explosion()
         {
             gameObject.SetActive(false);
