@@ -92,7 +92,7 @@ namespace Assets.Scripts.Terrains
                         AddTree((vertices[index - 3] + vertices[index - 4] + vertices[index-2]) / 3);
 
 
-                    i = (int)((h2 + h3 + h4) / 3 / 0.333f);
+                    i = (int)((h1 + h3 + h4) / 3 / 0.333f);
 
                     if (i == 0)
                         AddEnemy((vertices[index - 3] + vertices[index - 4] + vertices[index - 2]) / 3);
@@ -119,14 +119,16 @@ namespace Assets.Scripts.Terrains
             TreeTranform.position = EnemyTranform.position = transform.position -= new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size);
             TreeTranform.localScale = EnemyTranform.localScale = transform.localScale = new Vector3(size, 1, size);
 
-            RecalculateCollider();
-            EnemyController.Enable();
+            yield return RecalculateCollider();
+            yield return AddBorderCollider();
+            yield return EnemyController.Enable();
 
         }
-        public void RecalculateCollider()
+        public IEnumerator RecalculateCollider()
         {
             meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = MeshFilter.mesh;
+            yield return null;
         }
         private void AddTree(Vector3 center)
         {
@@ -148,13 +150,47 @@ namespace Assets.Scripts.Terrains
                 int index = UnityEngine.Random.Range(0, 100) % Enemies.Count;
 
                 Nation enemy = Instantiate(Enemies[index], EnemyTranform);
-                enemy.transform.position = center + new Vector3(UnityEngine.Random.Range(-size, size), 1.0f, UnityEngine.Random.Range(-size, size));
+                enemy.transform.position = center + new Vector3(UnityEngine.Random.Range(-size, size), 0.1f, UnityEngine.Random.Range(-size, size));
                 enemy.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
                 enemy.transform.localScale = new Vector3(.5f / size, .5f, .5f / size);
                 enemy.gameObject.SetActive(false);
 
                 EnemyController.Add(enemy);
             }
+        }
+
+        private IEnumerator AddBorderCollider()
+        {
+            GameObject b1 = new GameObject("b1");
+            b1.transform.position = transform.position + new Vector3(0, 0, size * Texture.height / 2);
+            b1.layer = 14;
+            BoxCollider coll1 = b1.AddComponent<BoxCollider>();
+            coll1.size = new Vector3(1, 10, size * Texture.height);
+            yield return null;
+
+            GameObject b2 = new GameObject("b2");
+            b2.transform.position = transform.position + new Vector3(size * texture.width, 0, size * Texture.height / 2);
+            b2.layer = 14;
+            BoxCollider coll2 = b2.AddComponent<BoxCollider>();
+            coll2.size = new Vector3(1, 10, size * Texture.height);
+            yield return null;
+
+
+            GameObject b3 = new GameObject("b3");
+            b3.transform.position = transform.position + new Vector3(size * texture.width/2, 0, size * Texture.height);
+            b3.layer = 14;
+            BoxCollider coll3 = b3.AddComponent<BoxCollider>();
+            coll3.size = new Vector3(size * Texture.width, 10, 1);
+            yield return null;
+
+            GameObject b4 = new GameObject("b4");
+            b4.transform.position = transform.position + new Vector3(size * texture.width / 2, 0,0);
+            b4.layer = 14;
+            BoxCollider coll4 = b4.AddComponent<BoxCollider>();
+            coll4.size = new Vector3(size * Texture.width, 10, 1);
+            yield return null;
+
+
         }
     }
 }
