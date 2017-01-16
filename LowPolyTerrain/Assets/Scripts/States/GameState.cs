@@ -17,6 +17,7 @@ namespace Assets.Scripts.States
 
         protected override IEnumerator Init()
         {
+            //SceneManager.LoadScene(2);
             yield return SceneManager.LoadSceneAsync(2);
 
             yield return Activate<GameStateInit>();

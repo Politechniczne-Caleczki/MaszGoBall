@@ -19,17 +19,35 @@ namespace Assets.Scripts.States.GameStates
         {
             TerrainController terrain = GameObject.FindObjectOfType<TerrainController>();
             hud = GameObject.FindObjectOfType<NetworkManagerHUD>();
-            hud.showGUI = false;
+            if(hud)
+                hud.showGUI = false;
 
             yield return terrain.GenerateTerrain(LoadingPanel.OnProgress);
+
+            CreateLight();
+
             yield return base.Init();
+        }
+
+        private void CreateLight()
+        {
+            GameObject oldLight = GameObject.Find("Directional Light");
+            GameObject.Destroy(oldLight);
+
+            GameObject newlight = new GameObject("Directional Light");
+            newlight.transform.eulerAngles = new Vector3(70, 10, 0);
+            Light light = newlight.AddComponent<Light>();
+            light.type = LightType.Directional;
+
         }
 
         protected override IEnumerator End()
         {
             LoadingPanel.Disable();
+            if(hud)
+                hud.showGUI = true;
 
-            hud.showGUI = true;
+
             var a = GameObject.FindObjectOfType<CustomNetworkManager>();
             //a.StartHost();
             
