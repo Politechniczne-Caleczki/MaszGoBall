@@ -1,14 +1,13 @@
-﻿using System;
+﻿
+
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.GameEngine.Units
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Player: MonoBehaviour
+    public class Player: NetworkBehaviour
     {
         [SerializeField]
         private Rigidbody Rigidbody;
@@ -18,6 +17,11 @@ namespace Assets.Scripts.GameEngine.Units
         private Animator animator;
         [SerializeField]
         private Light light;
+
+        private Vector3 Angle;
+        private Vector3 Offset;
+        private float currentVelocity;
+
 
         public string Name { get; private set; }
         public NationType NationType { get; private set; }
@@ -73,6 +77,9 @@ namespace Assets.Scripts.GameEngine.Units
         }
         private void Start()
         {
+            Offset = new Vector3(0, 0.05f, -0.15f);
+            Angle = Vector3.zero;
+
             gameObject.layer = 8;
             CanJump = true;
             Tentakel.OnEndShot = () =>
@@ -100,7 +107,13 @@ namespace Assets.Scripts.GameEngine.Units
             transform.position = NewPosition;
         }
         private void Update()
-        { 
+        {
+            if (!isLocalPlayer)
+            {
+                Destroy(this);
+                return;
+            }
+
             NewPosition = transform.position;
 
             NewPosition += (Quaternion.Euler(transform.eulerAngles) * new Vector3(Input.GetAxis("Horizontal") / 500, 0, Input.GetAxis("Vertical")/100));
@@ -132,6 +145,8 @@ namespace Assets.Scripts.GameEngine.Units
             }
 
             Jump();
+
+            CameraUpdate();
         }
         private void Jump()
         {
@@ -193,6 +208,36 @@ namespace Assets.Scripts.GameEngine.Units
             else
                 animator.SetInteger("State", 0);
 
+        }
+                                                        
+        private void CameraUpdate()
+        {
+            var camera = UnityEngine.Camera.main.transform;
+            camera.transform.position = transform.position + Quaternion.Euler(Angle) * Offset;
+            camera.transform.eulerAngles = Angle;
+
+            Offset.z += Input.GetAxis("Mouse ScrollWheel");
+            if (Offset.z > -0.15f)
+                Offset.z = -0.15f;
+
+            if (Offset.z < -1.5f)
+                Offset.z = -1.5f;
+
+            Angle.y += Input.GetAxis("Mouse X") * 2;
+            Angle.x += Input.GetAxis("Mouse Y") * 2;
+            if (Angle.x > 90)
+                Angle.x = 90;
+
+            if (Angle.x < -90)
+                Angle.x = -90;
+
+            if (Input.GetAxis("Fire2") == 0)
+            {
+                Angle.y += Input.GetAxis("Rotate") * 2;
+
+                Vector3 euler = transform.eulerAngles;
+                transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, camera.transform.eulerAngles.y, ref currentVelocity, 0.1f), euler.z);
+            }
         }
     }
 }

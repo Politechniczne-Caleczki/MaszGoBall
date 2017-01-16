@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.GameEngine.Units
 {
-    public class Nation: MonoBehaviour
+    public class Nation: NetworkBehaviour
     {
         [SerializeField]
         private NationType nationType;
