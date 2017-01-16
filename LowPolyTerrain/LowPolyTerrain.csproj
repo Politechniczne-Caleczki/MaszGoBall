@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.0f3</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -77,8 +75,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Creatures\CreatureManager.cs" />
+    <Compile Include="Assets\Scripts\CustomNetworkManager.cs" />
+    <Compile Include="Assets\Scripts\GUI\Game\LoadingPanel.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Bomb.cs" />
-    <Compile Include="Assets\Scripts\GameEngine\Units\Camera.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Creature.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Legs.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Nation.cs" />
@@ -86,7 +86,6 @@
     <Compile Include="Assets\Scripts\GameEngine\Units\Player.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Spiral.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Tentakel.cs" />
-    <Compile Include="Assets\Scripts\GUI\Game\LoadingPanel.cs" />
     <Compile Include="Assets\Scripts\Menu\Container.cs" />
     <Compile Include="Assets\Scripts\Menu\StartGame.cs" />
     <Compile Include="Assets\Scripts\States\ApplicationState.cs" />
@@ -97,7 +96,6 @@
     <Compile Include="Assets\Scripts\States\StateManager.cs" />
     <Compile Include="Assets\Scripts\Terrains\TerrainController.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
