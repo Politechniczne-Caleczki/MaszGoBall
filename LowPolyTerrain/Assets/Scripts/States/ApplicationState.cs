@@ -11,18 +11,19 @@ namespace Assets.Scripts.States
         private State Active { get; set; }
         public ApplicationState()
         {
-            AddState<MenuState>(this);
             AddState<GameState>(this);
         }
 
         protected internal IEnumerator Enable()
         {
-            yield return Activate<MenuState>();
+            yield return _Activate<GameState>();
         }
 
         protected internal void _Update()
         {
             Update();
         }
+
+
     }
 }

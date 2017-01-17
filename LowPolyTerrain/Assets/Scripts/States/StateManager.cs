@@ -24,6 +24,7 @@ namespace Assets.Scripts.States
 
         private IEnumerator Start()
         {
+            yield return new WaitForSeconds(3);
             AppState = new ApplicationState();
             yield return AppState.Enable();
         }
@@ -34,6 +35,9 @@ namespace Assets.Scripts.States
                 AppState._Update();
         }
 
-        
+        public static void StartCorutine(IEnumerator e)
+        {
+            Current.StartCoroutine(e);
+        }
     }
 }

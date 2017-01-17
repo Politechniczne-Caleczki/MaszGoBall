@@ -45,12 +45,7 @@ namespace Assets.Scripts.States.GameStates
         {
             LoadingPanel.Disable();
             if(hud)
-                hud.showGUI = true;
-
-
-            var a = GameObject.FindObjectOfType<CustomNetworkManager>();
-            //a.StartHost();
-            
+                hud.showGUI = true;            
 
             return base.End();
         }

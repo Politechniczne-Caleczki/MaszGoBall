@@ -78,10 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Creatures\CreatureManager.cs" />
-    <Compile Include="Assets\Scripts\CustomNetworkManager.cs" />
-    <Compile Include="Assets\Scripts\GameEngine\Units\Camera.cs" />
+    <Compile Include="Assets\Scripts\GUI\GUIContainer.cs" />
+    <Compile Include="Assets\Scripts\GUI\Game\GameMenu.cs" />
     <Compile Include="Assets\Scripts\GUI\Game\LoadingPanel.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Bomb.cs" />
+    <Compile Include="Assets\Scripts\GameEngine\Units\Camera.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Creature.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\EnemyController.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Legs.cs" />
@@ -90,14 +91,16 @@
     <Compile Include="Assets\Scripts\GameEngine\Units\Player.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Spiral.cs" />
     <Compile Include="Assets\Scripts\GameEngine\Units\Tentakel.cs" />
-    <Compile Include="Assets\Scripts\Menu\Container.cs" />
-    <Compile Include="Assets\Scripts\Menu\StartGame.cs" />
+    <Compile Include="Assets\Scripts\Network\CustomNetworkManager.cs" />
     <Compile Include="Assets\Scripts\States\ApplicationState.cs" />
     <Compile Include="Assets\Scripts\States\GameState.cs" />
     <Compile Include="Assets\Scripts\States\GameStates\GameStateInit.cs" />
-    <Compile Include="Assets\Scripts\States\MenuState.cs" />
+    <Compile Include="Assets\Scripts\States\GameStates\GameState_AddPlayer.cs" />
+    <Compile Include="Assets\Scripts\States\GameStates\GameState_CreateServer.cs" />
     <Compile Include="Assets\Scripts\States\State.cs" />
     <Compile Include="Assets\Scripts\States\StateManager.cs" />
+    <Compile Include="Assets\Scripts\Terrains\SpawnPoints.cs" />
+    <Compile Include="Assets\Scripts\Terrains\Terrain.cs" />
     <Compile Include="Assets\Scripts\Terrains\TerrainController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

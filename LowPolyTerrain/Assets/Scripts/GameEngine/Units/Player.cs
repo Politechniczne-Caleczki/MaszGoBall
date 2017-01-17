@@ -1,5 +1,6 @@
 ﻿
 
+using Assets.Scripts.Terrains;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -21,8 +22,6 @@ namespace Assets.Scripts.GameEngine.Units
         private Vector3 Angle;
         private Vector3 Offset;
         private float currentVelocity;
-
-
         public string Name { get; private set; }
         public NationType NationType { get; private set; }
         private bool CanJump { get;  set; }
@@ -31,12 +30,13 @@ namespace Assets.Scripts.GameEngine.Units
         {
             if(NationType== NationType.None)
             {
-                AddNation(nation);
+                CmdAddNation(nation);
                 return;
+
             }
 
             if (nation.NationType == NationType)
-                AddNation(nation);
+                CmdAddNation(nation);
             else
                 KillPlayer(nation);
         }
@@ -51,7 +51,9 @@ namespace Assets.Scripts.GameEngine.Units
             }
             nation.Explosion();
         }
-        private void AddNation(Nation nation)
+
+
+        private void CmdAddNation(Nation nation)
         {
             if (Tentakel.IsReady && nation.CanCath)
             {
@@ -82,6 +84,13 @@ namespace Assets.Scripts.GameEngine.Units
 
             gameObject.layer = 8;
             CanJump = true;
+
+            Terrains.Terrain t = GameObject.FindObjectOfType<Terrains.Terrain>();
+
+            transform.position = NewPosition = t.SpawnPoints[Random.Range(0, t.SpawnPoints.Count)].transform.position + new Vector3(0, .5f, 0);
+
+            UnityEngine.Camera.main.GetComponent<Camera>().player = this;
+
             Tentakel.OnEndShot = () =>
             {
                 switch(NationType)
@@ -209,7 +218,6 @@ namespace Assets.Scripts.GameEngine.Units
                 animator.SetInteger("State", 0);
 
         }
-                                                        
         private void CameraUpdate()
         {
             var camera = UnityEngine.Camera.main.transform;
@@ -239,5 +247,7 @@ namespace Assets.Scripts.GameEngine.Units
                 transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, camera.transform.eulerAngles.y, ref currentVelocity, 0.1f), euler.z);
             }
         }
+
+
     }
 }

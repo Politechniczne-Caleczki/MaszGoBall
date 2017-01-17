@@ -9,6 +9,9 @@ namespace Assets.Scripts.GameEngine.Units
 {
     public class Nation: NetworkBehaviour
     {
+
+
+
         [SerializeField]
         private NationType nationType;
         [SerializeField]
@@ -34,12 +37,12 @@ namespace Assets.Scripts.GameEngine.Units
                     break;
             }
         }
-
         private void OnCollisionExit(Collision collision)
         {
             switch (collision.gameObject.layer)
             {
                 case 8:
+                case 9:
                     {
                         if (!CanCath)
                         {
@@ -50,7 +53,6 @@ namespace Assets.Scripts.GameEngine.Units
                     break;
             }
         }
-
         public void Explosion()
         {
             gameObject.SetActive(false);

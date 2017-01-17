@@ -3,13 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Assets.Scripts.GameEngine.Units;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.Terrains
 {
-    [RequireComponent(typeof(MeshFilter))]
-    [RequireComponent(typeof(MeshRenderer))]
-    [RequireComponent(typeof(MeshCollider))]
-    [RequireComponent(typeof(Rigidbody))]
     public class TerrainController : MonoBehaviour
     {
         private float height = .75f;
@@ -26,38 +23,39 @@ namespace Assets.Scripts.Terrains
         List<GameObject> Trees;
 
         [SerializeField]
-        List<Nation> Enemies; 
+        List<Nation> Enemies;
 
         [SerializeField]
-        private MeshFilter meshFilter;
+        private Terrain terrainPrefab;
 
         [SerializeField]
-        private MeshRenderer meshRenderer;
+        private GameObject borderPrefab;
 
         [SerializeField]
-        private MeshCollider meshCollider;
-
+        private SpawnPoints spawnPointsPrefab;
 
         [SerializeField]
         private Texture2D texture;
-        private Mesh Mesh
+
+        private Terrain Terrain
         {
-            get { return MeshFilter.mesh; }
-            set { MeshFilter.mesh = value; }
+            get;set;
         }
+
         private Texture2D Texture
         {
             get { return texture; }
 
         }
-        private MeshFilter MeshFilter
-        {
-            get { return meshFilter; }
-        }
+
         public IEnumerator GenerateTerrain(Action<float> onProgress)
         {
-            Mesh = new Mesh();
-            Mesh.subMeshCount = 3;
+            Terrain = Instantiate(terrainPrefab);
+
+            
+
+            Terrain.Mesh = new Mesh();
+            Terrain.Mesh.subMeshCount = 3;
 
             List<Vector3> vertices = new List<Vector3>();
             List<int>[] Triangels = new List<int>[4];
@@ -88,14 +86,16 @@ namespace Assets.Scripts.Terrains
                     Triangels[i].Add(index - 3);
                     Triangels[i].Add(index - 4);
                     Triangels[i].Add(index - 2);
-                    if (i == 0)
+                    if (i == 0 && NetworkServer.active)
                         AddTree((vertices[index - 3] + vertices[index - 4] + vertices[index-2]) / 3);
 
 
                     i = (int)((h1 + h3 + h4) / 3 / 0.333f);
 
-                    if (i == 0)
+                    if (i == 0 && NetworkServer.active)
+                    {
                         AddEnemy((vertices[index - 3] + vertices[index - 4] + vertices[index - 2]) / 3);
+                    }
 
                     Triangels[i].Add(index - 1);
                     Triangels[i].Add(index - 3);
@@ -109,27 +109,22 @@ namespace Assets.Scripts.Terrains
             }
 
 
-            Mesh.vertices = vertices.ToArray();
+            Terrain.Mesh.vertices = vertices.ToArray();
             for (int x = 0; x < 3; ++x)
-                Mesh.SetTriangles(Triangels[x], x);
+                Terrain.Mesh.SetTriangles(Triangels[x], x);
 
-            Mesh.RecalculateNormals();
-            Mesh.RecalculateBounds();
+            Terrain.Mesh.RecalculateNormals();
+            Terrain.Mesh.RecalculateBounds();
 
-            TreeTranform.position = EnemyTranform.position = transform.position -= new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size);
-            TreeTranform.localScale = EnemyTranform.localScale = transform.localScale = new Vector3(size, 1, size);
+            TreeTranform.position = EnemyTranform.position = Terrain.transform.position -= new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size);
+            TreeTranform.localScale = EnemyTranform.localScale = Terrain.transform.localScale = new Vector3(size, 1, size);
 
-            yield return RecalculateCollider();
+            yield return Terrain.RecalculateCollider();
+            
             yield return AddBorderCollider();
             yield return EnemyController.Enable();
+        }
 
-        }
-        public IEnumerator RecalculateCollider()
-        {
-            meshCollider.sharedMesh = null;
-            meshCollider.sharedMesh = MeshFilter.mesh;
-            yield return null;
-        }
         private void AddTree(Vector3 center)
         {
             if (UnityEngine.Random.Range(0, 2) == 0)
@@ -140,8 +135,10 @@ namespace Assets.Scripts.Terrains
                 tree.transform.localScale = new Vector3(1 / size, 1, 1 / size);
                 tree.isStatic = true;
                 tree.layer = 14;
+                NetworkServer.Spawn(tree);
             }
         }
+
         private void AddEnemy(Vector3 center)
         {
             if (UnityEngine.Random.Range(0, 10) == 0)
@@ -149,11 +146,15 @@ namespace Assets.Scripts.Terrains
 
                 int index = UnityEngine.Random.Range(0, 100) % Enemies.Count;
 
-                Nation enemy = Instantiate(Enemies[index], EnemyTranform);
+                Nation enemy =  Instantiate(Enemies[index], EnemyTranform);
                 enemy.transform.position = center + new Vector3(UnityEngine.Random.Range(-size, size), 0.1f, UnityEngine.Random.Range(-size, size));
                 enemy.transform.eulerAngles = new Vector3(0, UnityEngine.Random.Range(0f, 360f), 0);
                 enemy.transform.localScale = new Vector3(.5f / size, .5f, .5f / size);
                 enemy.gameObject.SetActive(false);
+                NetworkServer.Spawn(enemy.gameObject);
+
+                Terrain.SpawnPoints.Add(Instantiate(spawnPointsPrefab, center*size - new Vector3(texture.width / 2 * size, 0, texture.height / 2 * size), Quaternion.identity));
+                NetworkServer.Spawn(Terrain.SpawnPoints[Terrain.SpawnPoints.Count - 1].gameObject);
 
                 EnemyController.Add(enemy);
             }
@@ -161,36 +162,56 @@ namespace Assets.Scripts.Terrains
 
         private IEnumerator AddBorderCollider()
         {
-            GameObject b1 = new GameObject("b1");
-            b1.transform.position = transform.position + new Vector3(0, 0, size * Texture.height / 2);
+            GameObject b1 = Instantiate(borderPrefab);
+            b1.transform.position = Terrain.transform.position + new Vector3(0, 0, size * Texture.height / 2);
             b1.layer = 14;
-            BoxCollider coll1 = b1.AddComponent<BoxCollider>();
+            BoxCollider coll1 = b1.GetComponent<BoxCollider>();
+            
             coll1.size = new Vector3(1, 10, size * Texture.height);
+           // NetworkServer.Spawn(b1);
             yield return null;
 
-            GameObject b2 = new GameObject("b2");
-            b2.transform.position = transform.position + new Vector3(size * texture.width, 0, size * Texture.height / 2);
+            GameObject b2 = Instantiate(borderPrefab);
+            b2.transform.position = Terrain.transform.position + new Vector3(size * texture.width, 0, size * Texture.height / 2);
             b2.layer = 14;
-            BoxCollider coll2 = b2.AddComponent<BoxCollider>();
+            BoxCollider coll2 = b2.GetComponent<BoxCollider>();
             coll2.size = new Vector3(1, 10, size * Texture.height);
+           // NetworkServer.Spawn(b2);
+
             yield return null;
 
 
-            GameObject b3 = new GameObject("b3");
-            b3.transform.position = transform.position + new Vector3(size * texture.width/2, 0, size * Texture.height);
+            GameObject b3 = Instantiate(borderPrefab);
+            b3.transform.position = Terrain.transform.position + new Vector3(size * texture.width/2, 0, size * Texture.height);
             b3.layer = 14;
-            BoxCollider coll3 = b3.AddComponent<BoxCollider>();
+            BoxCollider coll3 = b3.GetComponent<BoxCollider>();
             coll3.size = new Vector3(size * Texture.width, 10, 1);
+           // NetworkServer.Spawn(b3);
+
             yield return null;
 
-            GameObject b4 = new GameObject("b4");
-            b4.transform.position = transform.position + new Vector3(size * texture.width / 2, 0,0);
+            GameObject b4 = Instantiate(borderPrefab);
+            b4.transform.position = Terrain.transform.position + new Vector3(size * texture.width / 2, 0,0);
             b4.layer = 14;
-            BoxCollider coll4 = b4.AddComponent<BoxCollider>();
+            BoxCollider coll4 = b4.GetComponent<BoxCollider>();
             coll4.size = new Vector3(size * Texture.width, 10, 1);
+           // NetworkServer.Spawn(b4);
+
             yield return null;
 
 
         }
+        
+        public void CreateLight()
+        {
+            GameObject oldLight = GameObject.Find("Directional Light");
+            GameObject.Destroy(oldLight);
+
+            GameObject newlight = new GameObject("Directional Light");
+            newlight.transform.eulerAngles = new Vector3(70, 10, 0);
+            Light light = newlight.AddComponent<Light>();
+            light.type = LightType.Directional;
+        }
     }
 }
+s

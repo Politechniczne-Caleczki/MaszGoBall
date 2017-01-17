@@ -1,9 +1,11 @@
-﻿using Assets.Scripts.States.GameStates;
+﻿using Assets.Scripts.GUI;
+using Assets.Scripts.States.GameStates;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.States
@@ -12,20 +14,17 @@ namespace Assets.Scripts.States
     {
         public GameState()
         {
-            AddState<GameStateInit>(this);
+            AddState<GameState_CreateServer>(this);
+            AddState<GameState_AddPlayer>(this);
         }
 
         protected override IEnumerator Init()
         {
-            //SceneManager.LoadScene(2);
-            yield return SceneManager.LoadSceneAsync(2);
-
-            yield return Activate<GameStateInit>();
-            yield return Deactivate<GameStateInit>();
-                
-
-            yield return base.Init();
+            yield return SceneManager.LoadSceneAsync(1);
+            GUIContainer.GameMenu.CreateServer.onClick.AddListener(Activate<GameState_CreateServer>);
+            GUIContainer.GameMenu.Connect.onClick.AddListener(Activate<GameState_AddPlayer>);
+            GUIContainer.GameMenu.Exit.onClick.AddListener(Application.Quit);
+            base.Init();
         }
-
     }
 }

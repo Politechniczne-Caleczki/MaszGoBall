@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts.States
 {
@@ -20,8 +21,16 @@ namespace Assets.Scripts.States
             Parent = parent;
             Child = new List<State>();
         }
-        protected internal IEnumerator Activate<T>() where T : State
+
+        protected internal void Activate<T>() where T : State
         {
+            StateManager.StartCorutine(_Activate<T>());
+        }
+
+        protected internal IEnumerator _Activate<T>() where T : State
+        {
+            Debug.Log("Activate: "+ typeof(T));
+
             if (Active != null)
                 yield return Active.End();
 
@@ -30,7 +39,13 @@ namespace Assets.Scripts.States
 
             yield return Active.Init();
         }
-        protected internal IEnumerator Deactivate<T>() where T : State
+
+        protected internal void Deactivate<T>() where T : State
+        {
+            StateManager.StartCorutine(_Deactivate<T>());
+        }
+
+        protected internal IEnumerator _Deactivate<T>() where T : State
         {
             if (Active != null)
                 yield return Active.End();
