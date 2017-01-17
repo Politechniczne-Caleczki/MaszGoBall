@@ -34,6 +34,11 @@ namespace Assets.Scripts.States
             if (Active != null)
                 yield return Active.End();
 
+            if (Parent != null)
+                if (Parent.Active != null)
+                    yield return Parent.Active.End();
+
+
             Active = Child.Find(x => x.GetType() == typeof(T));
             if (Active == null) throw new Exception("State not found");
 

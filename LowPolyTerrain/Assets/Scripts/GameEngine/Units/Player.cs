@@ -1,5 +1,6 @@
 ﻿
 
+using Assets.Scripts.GUI.Game;
 using Assets.Scripts.Terrains;
 using System.Collections;
 using UnityEngine;
@@ -22,21 +23,26 @@ namespace Assets.Scripts.GameEngine.Units
         private Vector3 Angle;
         private Vector3 Offset;
         private float currentVelocity;
-        public string Name { get; private set; }
+        public string Name { get { return this._name; } private set { this._name = value; } }
         public NationType NationType { get; private set; }
         private bool CanJump { get;  set; }
         Vector3 NewPosition { get; set; }
-        public void Touch(Nation nation)
+
+        [SyncVar]
+        private string _name;
+        [Command]
+        public void CmdTouch(GameObject _nation)
         {
+            Nation nation = _nation.GetComponent<Nation>();
+
             if(NationType== NationType.None)
             {
-                CmdAddNation(nation);
+                CmdAddNation(_nation);
                 return;
-
             }
 
             if (nation.NationType == NationType)
-                CmdAddNation(nation);
+                CmdAddNation(_nation);
             else
                 KillPlayer(nation);
         }
@@ -52,28 +58,39 @@ namespace Assets.Scripts.GameEngine.Units
             nation.Explosion();
         }
 
-
-        private void CmdAddNation(Nation nation)
+        [Command]
+        private void CmdAddNation(GameObject _nation)
         {
+            Nation nation = _nation.GetComponent<Nation>();
             if (Tentakel.IsReady && nation.CanCath)
             {
                 Debug.Log("Add nation: " + nation.NationType);
                 NationType = nation.NationType;
-                nation.Catch();
-                Tentakel.Catch(nation);
+                nation.CmdCatch();
+                Tentakel.Catch(_nation);
                 light.enabled = true;
                 switch(nation.NationType)
                 {
                     case NationType.Red:
-                        light.color = Color.red;
+                        {
+                            GameGUI.PlayerImage.color = light.color = Color.red;
+                        }
                         break;
                     case NationType.Blue:
-                        light.color = Color.blue;
+                        {
+                            GameGUI.PlayerImage.color = light.color = Color.blue;
+                        }
                         break;
+                    case NationType.None:
+                        {
+                            GameGUI.PlayerImage.color = light.color =  new Color(1, 1, 1, 0);
+                        }break;
                 }
             }
         }
-        private void Shot()
+
+        [Command]
+        private void CmdShot()
         {
             Tentakel.Shot();
         }
@@ -87,6 +104,8 @@ namespace Assets.Scripts.GameEngine.Units
 
             Terrains.Terrain t = GameObject.FindObjectOfType<Terrains.Terrain>();
 
+            Name = string.Format("Player_{0}",GameObject.FindObjectsOfType<Assets.Scripts.GameEngine.Units.Player>().Length+8);
+
             transform.position = NewPosition = t.SpawnPoints[Random.Range(0, t.SpawnPoints.Count)].transform.position + new Vector3(0, .5f, 0);
 
             UnityEngine.Camera.main.GetComponent<Camera>().player = this;
@@ -98,14 +117,20 @@ namespace Assets.Scripts.GameEngine.Units
                     case NationType.Red:
                         {
                             NationType = NationType.Blue;
-                            light.color = Color.blue;
+                            GameGUI.PlayerImage.color = light.color = Color.blue;
                         }
                         break;
 
                     case NationType.Blue:
                         {
                             NationType = NationType.Red;
-                            light.color = Color.red;
+                            GameGUI.PlayerImage.color = light.color = Color.red;
+                        }
+                        break;
+                    case NationType.None:
+                        {
+                            NationType = NationType.None;
+                            GameGUI.PlayerImage.color = light.color = new Color(1, 1, 1, 0);
                         }
                         break;
                 }
@@ -150,7 +175,7 @@ namespace Assets.Scripts.GameEngine.Units
             if (!Tentakel.IsReady)
             {
                 if (Input.GetAxis("Fire1") != 0)
-                    Shot();
+                    CmdShot();
             }
 
             Jump();
@@ -247,6 +272,21 @@ namespace Assets.Scripts.GameEngine.Units
                 transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, camera.transform.eulerAngles.y, ref currentVelocity, 0.1f), euler.z);
             }
         }
+
+        public string ScoreString
+        {
+            get { return string.Format("{0,-35} {1,35} / {2,1}", Name, Kills, Deaths); }
+        }
+
+        public int Kills { get { return kills; } private set { kills = value; } }
+        public int Deaths { get { return deaths; } private set {deaths = value; } }
+
+        [SyncVar]
+        private int kills;
+
+        [SyncVar]
+        private int deaths;
+
 
 
     }

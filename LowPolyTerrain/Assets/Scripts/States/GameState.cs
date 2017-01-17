@@ -16,15 +16,31 @@ namespace Assets.Scripts.States
         {
             AddState<GameState_CreateServer>(this);
             AddState<GameState_AddPlayer>(this);
+            AddState<GameState_Play>(this);
         }
 
         protected override IEnumerator Init()
         {
             yield return SceneManager.LoadSceneAsync(1);
+
+            GUIContainer.GameMenu.gameObject.SetActive(true);
+            GUIContainer.LoadingPanel.gameObject.SetActive(false);
+            GUIContainer.GameGUI.gameObject.SetActive(false);
+
+
             GUIContainer.GameMenu.CreateServer.onClick.AddListener(Activate<GameState_CreateServer>);
             GUIContainer.GameMenu.Connect.onClick.AddListener(Activate<GameState_AddPlayer>);
             GUIContainer.GameMenu.Exit.onClick.AddListener(Application.Quit);
             base.Init();
+        }
+
+        protected override IEnumerator End()
+        {
+            Debug.Log("end:"+ this.GetType());
+            GUIContainer.GameMenu.gameObject.SetActive(false);
+            GUIContainer.LoadingPanel.gameObject.SetActive(true);
+
+            yield return base.End();
         }
     }
 }

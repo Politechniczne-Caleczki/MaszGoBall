@@ -214,4 +214,3 @@ namespace Assets.Scripts.Terrains
         }
     }
 }
-s

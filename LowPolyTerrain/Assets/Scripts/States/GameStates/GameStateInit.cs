@@ -18,9 +18,6 @@ namespace Assets.Scripts.States.GameStates
         protected override IEnumerator Init()
         {
             TerrainController terrain = GameObject.FindObjectOfType<TerrainController>();
-            hud = GameObject.FindObjectOfType<NetworkManagerHUD>();
-            if(hud)
-                hud.showGUI = false;
 
             yield return terrain.GenerateTerrain(LoadingPanel.OnProgress);
 
@@ -43,11 +40,9 @@ namespace Assets.Scripts.States.GameStates
 
         protected override IEnumerator End()
         {
-            LoadingPanel.Disable();
-            if(hud)
-                hud.showGUI = true;            
+            LoadingPanel.Disable();     
 
-            return base.End();
+            yield return base.End();
         }
     }
 }

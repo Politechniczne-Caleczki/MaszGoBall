@@ -17,20 +17,17 @@ namespace Assets.Scripts.States.GameStates
     {
         protected override IEnumerator Init()
         {
-            GUIContainer.GameMenu.gameObject.SetActive(false);
-            GUIContainer.LoadingPanel.gameObject.SetActive(true);
-
             if (CustomNetworkManager.AddPlayer()!=null)
             {
                 TerrainController tc = GameObject.FindObjectOfType<TerrainController>();
 
                 if(tc!=null)
                     yield return tc.GenerateTerrain(LoadingPanel.OnProgress);
-                tc.CreateLight();
-                GameObject.FindObjectOfType<Player>().enabled = true;
+                tc.CreateLight();                
             }
 
-            GUIContainer.LoadingPanel.gameObject.SetActive(false);
+            if (Parent != null)
+                Parent.Activate<GameState_Play>();
 
             yield return base.Init();
         }

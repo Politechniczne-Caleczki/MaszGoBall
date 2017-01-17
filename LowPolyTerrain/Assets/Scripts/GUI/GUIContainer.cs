@@ -17,9 +17,20 @@ namespace Assets.Scripts.GUI
         [SerializeField]
         private GameMenu gameMenu;
 
+        [SerializeField]
+        private GameGUI gameGUI;
+
         private void Awake()
         {
             instance = this;
+        }
+
+        public static GameGUI GameGUI
+        {
+            get
+            {
+                return instance.gameGUI;
+            }
         }
 
         public static LoadingPanel LoadingPanel

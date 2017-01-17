@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.GameEngine.Units
 {
-    class Tentakel: MonoBehaviour
+    class Tentakel: NetworkBehaviour
     {
         [SerializeField]
         private Animator animator;
@@ -32,13 +33,13 @@ namespace Assets.Scripts.GameEngine.Units
             animator.SetInteger("State", 0);
             Nation = null;
         }
-
-        public void Catch(Nation nation)
+        
+        public void Catch(GameObject nation)
         {
             if (Nation == null)
             {
                 animator.SetInteger("State", 1);
-                Nation = nation;
+                Nation = nation.GetComponent<Nation>();
             }
             else throw new Exception("Tantakel not free");
         }
@@ -62,13 +63,13 @@ namespace Assets.Scripts.GameEngine.Units
             animator.SetInteger("State", 2);
         }
 
-
+        
         public void EndShot()
         {
             if (Nation)
             {
                 Nation.Rigidbody.AddForce(Quaternion.Euler(0, transform.parent.transform.eulerAngles.y, 0) * new Vector3(0, 1.5f, 1), ForceMode.Impulse);
-                Nation.Shot();
+                Nation.CmdShot();
                 Nation = null;
                 OnEndShot();
             }

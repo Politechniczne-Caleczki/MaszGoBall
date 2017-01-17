@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.GameEngine.Units
 {
@@ -45,17 +46,19 @@ namespace Assets.Scripts.GameEngine.Units
             }
         }
 
-        public override void Catch()
+        [Command]
+        public override void CmdCatch()
         {
             animator.SetInteger("State", 0);
 
-            base.Catch();
+            base.CmdCatch();
         }
 
-        public override void Shot()
+        [Command]
+        public override void CmdShot()
         {
             animator.SetInteger("State", 1);
-            base.Shot();
+            base.CmdShot();
         }
     }
 }

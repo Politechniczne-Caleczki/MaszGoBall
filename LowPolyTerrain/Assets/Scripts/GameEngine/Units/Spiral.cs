@@ -10,8 +10,6 @@ namespace Assets.Scripts.GameEngine.Units
     class Spiral:Creature
     {
 
-
-
         public void Jump()
         {
             Rigidbody.AddForce(Quaternion.Euler(transform.eulerAngles)* new Vector3(0, 1.5f, 0.50f), ForceMode.Impulse);

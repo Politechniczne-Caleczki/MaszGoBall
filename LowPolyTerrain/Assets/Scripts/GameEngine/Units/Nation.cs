@@ -9,9 +9,6 @@ namespace Assets.Scripts.GameEngine.Units
 {
     public class Nation: NetworkBehaviour
     {
-
-
-
         [SerializeField]
         private NationType nationType;
         [SerializeField]
@@ -32,7 +29,7 @@ namespace Assets.Scripts.GameEngine.Units
                 case 8:
                     {
                         if(CanCath)
-                            collision.gameObject.GetComponent<Player>().Touch(this);
+                            collision.gameObject.GetComponent<Player>().CmdTouch(this.gameObject);
                     }
                     break;
             }
@@ -56,15 +53,19 @@ namespace Assets.Scripts.GameEngine.Units
         public void Explosion()
         {
             gameObject.SetActive(false);
-
         }
-        public virtual void Catch()
+
+        [Command]
+        public virtual void CmdCatch()
         {
             CanCath = enabled = false;
             Collider.enabled = false;
             Rigidbody.useGravity = false;
+            Debug.Log("Nie działa");
         }
-        public virtual void Shot()
+
+        [Command]
+        public virtual void CmdShot()
         {
             enabled = true;
             Collider.enabled = true;

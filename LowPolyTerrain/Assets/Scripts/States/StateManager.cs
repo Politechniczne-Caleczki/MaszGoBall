@@ -24,7 +24,7 @@ namespace Assets.Scripts.States
 
         private IEnumerator Start()
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(0);
             AppState = new ApplicationState();
             yield return AppState.Enable();
         }
