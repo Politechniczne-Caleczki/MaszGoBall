@@ -15,12 +15,16 @@ namespace Assets.Scripts.GameEngine.Units
         public Rigidbody Rigidbody;
         [SerializeField]
         public BoxCollider Collider;
+
+        [SyncVar]
+        private bool Enabled = true;
         public NationType NationType { get { return nationType; } protected set { nationType = value; } }
         public string Name { get { return name; } protected set { name = value; } }
         public bool CanCath { get; private set; }
         private void Start()
         {
             CanCath = true;
+            Enabled = true;
         }
         protected virtual void OnCollisionEnter(Collision collision)
         {
@@ -44,7 +48,6 @@ namespace Assets.Scripts.GameEngine.Units
                         if (!CanCath)
                         {
                             CanCath = true;
-                            Debug.Log("CanCath");
                         }
                     }
                     break;
@@ -55,9 +58,11 @@ namespace Assets.Scripts.GameEngine.Units
             gameObject.SetActive(false);
         }
 
-        [Command]
+
         public virtual void CmdCatch()
         {
+            Enabled = false;
+
             gameObject.GetComponent<Animator>().enabled = false;
             CanCath = enabled = false;
             Collider.enabled = false;
@@ -65,14 +70,24 @@ namespace Assets.Scripts.GameEngine.Units
 
         }
 
-        [Command]
+
         public virtual void CmdShot()
         {
+            Enabled = true;
             gameObject.GetComponent<Animator>().enabled = true;
             enabled = true;
             Collider.enabled = true;
             Rigidbody.useGravity = true;
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+        }
+
+        protected virtual void Update()
+        {
+
+            if (!Enabled)
+                CmdCatch();
+            else
+                CmdShot();
         }
 
 

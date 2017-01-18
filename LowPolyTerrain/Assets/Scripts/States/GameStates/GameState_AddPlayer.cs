@@ -19,7 +19,9 @@ namespace Assets.Scripts.States.GameStates
         {
             NetworkClient nc = CustomNetworkManager.AddPlayer();
 
-              if (nc!=null)
+           
+
+            if (nc!=null)
             {
                 TerrainController tc = GameObject.FindObjectOfType<TerrainController>();
 
@@ -29,7 +31,6 @@ namespace Assets.Scripts.States.GameStates
 
                 if (Parent != null)
                     Parent.Activate<GameState_Play>();
-
             }
             else
             {

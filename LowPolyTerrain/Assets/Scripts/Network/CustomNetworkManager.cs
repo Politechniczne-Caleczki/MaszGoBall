@@ -14,8 +14,11 @@ namespace Assets.Scripts.Network
         private void Awake()
         {
             instance = this;
+        }
 
-            
+        public static bool Active()
+        {
+            return instance.isNetworkActive;
         }
 
         public static NetworkClient RunServer()
@@ -23,13 +26,7 @@ namespace Assets.Scripts.Network
             return instance.StartHost();
         }
 
-        private new void OnClientError(NetworkConnection conn, int errorCode)
-        {
-            Debug.Log(errorCode);
 
-            base.OnClientError(conn, errorCode);                
-        }
-        
         public static NetworkClient AddPlayer()
         {
             return instance.StartClient();
@@ -41,10 +38,5 @@ namespace Assets.Scripts.Network
             instance.StopHost();
             instance.StopServer();
         }
-
-
-
-
-
     }
 }
