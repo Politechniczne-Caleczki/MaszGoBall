@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.States.GameStates
 {
@@ -17,17 +17,27 @@ namespace Assets.Scripts.States.GameStates
     {
         protected override IEnumerator Init()
         {
-            if (CustomNetworkManager.AddPlayer()!=null)
+            NetworkClient nc = CustomNetworkManager.AddPlayer();
+
+              if (nc!=null)
             {
                 TerrainController tc = GameObject.FindObjectOfType<TerrainController>();
 
-                if(tc!=null)
+                if (tc != null)
                     yield return tc.GenerateTerrain(LoadingPanel.OnProgress);
-                tc.CreateLight();                
+                tc.CreateLight();
+
+                if (Parent != null)
+                    Parent.Activate<GameState_Play>();
+
+            }
+            else
+            {
+                nc.Disconnect();
+                CustomNetworkManager.Stop();
+                Deactivate<GameState_AddPlayer>();
             }
 
-            if (Parent != null)
-                Parent.Activate<GameState_Play>();
 
             yield return base.Init();
         }

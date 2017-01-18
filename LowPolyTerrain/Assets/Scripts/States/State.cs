@@ -56,9 +56,19 @@ namespace Assets.Scripts.States
                 yield return Active.End();
 
             Active = null;
+
+            yield return End();
+
+            if (Parent != null)
+            {
+                Parent.Active = null;
+                yield return Parent.Init();
+            }
+
         }
         protected virtual IEnumerator Init()
         {
+            
             yield return null;
         }
         protected virtual IEnumerator End()

@@ -56,6 +56,9 @@ namespace Assets.Scripts.GameEngine.Units
                     Player.transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, transform.eulerAngles.y, ref currentVelocityY, 0.1f), euler.z);
                 }
             }
+
+
+           
         }
 
         private void LateUpdate()

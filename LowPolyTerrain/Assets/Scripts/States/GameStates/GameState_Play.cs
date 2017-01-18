@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.GameEngine.Units;
 using Assets.Scripts.GUI;
 using Assets.Scripts.GUI.Game;
+using Assets.Scripts.Network;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,17 +34,35 @@ namespace Assets.Scripts.States.GameStates
 
         protected override void Update()
         {
-            GameGUI.Compass.transform.eulerAngles= new Vector3 (0, 0, Player.transform.eulerAngles.y);
+            if (Player)
+            {
+                GameGUI.Compass.transform.eulerAngles = new Vector3(0, 0, Player.transform.eulerAngles.y);
 
-            if(Input.GetKeyDown(KeyCode.Tab))
-            {
-                GameGUI.ShowScorePanel();
-            }else if(Input.GetKeyUp(KeyCode.Tab))
-            {
-                GameGUI.HideScorePanel();
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    GameGUI.ShowScorePanel();
+                }
+                else if (Input.GetKeyUp(KeyCode.Tab))
+                {
+                    GameGUI.HideScorePanel();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Deactivate<GameState_Play>();
+
             }
 
             base.Update();
         }
+
+        protected override IEnumerator End()
+        {
+            CustomNetworkManager.Stop();
+            EnemyController.Claer();
+
+            return base.End();
+        }
+
+
     }
 }
