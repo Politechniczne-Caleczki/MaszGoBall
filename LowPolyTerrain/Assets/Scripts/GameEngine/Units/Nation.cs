@@ -58,19 +58,23 @@ namespace Assets.Scripts.GameEngine.Units
         [Command]
         public virtual void CmdCatch()
         {
+            gameObject.GetComponent<Animator>().enabled = false;
             CanCath = enabled = false;
             Collider.enabled = false;
             Rigidbody.useGravity = false;
-            Debug.Log("Nie działa");
+
         }
 
         [Command]
         public virtual void CmdShot()
         {
+            gameObject.GetComponent<Animator>().enabled = true;
             enabled = true;
             Collider.enabled = true;
             Rigidbody.useGravity = true;
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
         }
+
+
     }
 }

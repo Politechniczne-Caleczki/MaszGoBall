@@ -35,6 +35,9 @@ namespace Assets.Scripts.Terrains
         private SpawnPoints spawnPointsPrefab;
 
         [SerializeField]
+        private BottomCollider bottomColliderPrefab;
+
+        [SerializeField]
         private Texture2D texture;
 
         private Terrain Terrain
@@ -195,7 +198,14 @@ namespace Assets.Scripts.Terrains
             b4.layer = 14;
             BoxCollider coll4 = b4.GetComponent<BoxCollider>();
             coll4.size = new Vector3(size * Texture.width, 10, 1);
-           // NetworkServer.Spawn(b4);
+
+            // NetworkServer.Spawn(b4);
+
+            BottomCollider bC = Instantiate(bottomColliderPrefab);
+            bC.transform.position = transform.position - new Vector3(0, 0.5f, 0);
+            bC.gameObject.layer = 14;
+            BoxCollider collbC = bC.GetComponent<BoxCollider>();
+            collbC.size = new Vector3(size * Texture.width, .4f, size*Texture.height);
 
             yield return null;
 

@@ -13,7 +13,8 @@ namespace Assets.Scripts.GameEngine.Units
         public Player player;
         private Vector3 Angle;
         private Vector3 Offset;
-        private float currentVelocity;
+        private float currentVelocityY;
+        private float currentVelocityX;
 
         private Player Player { get { return player; } }
 
@@ -39,6 +40,8 @@ namespace Assets.Scripts.GameEngine.Units
 
                 Angle.y += Input.GetAxis("Mouse X") * 2;
                 Angle.x += Input.GetAxis("Mouse Y") * 2;
+
+
                 if (Angle.x > 90)
                     Angle.x = 90;
 
@@ -50,7 +53,7 @@ namespace Assets.Scripts.GameEngine.Units
                     Angle.y += Input.GetAxis("Rotate") * 2;
 
                     Vector3 euler = Player.transform.eulerAngles;
-                    Player.transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, transform.eulerAngles.y, ref currentVelocity, 0.1f), euler.z);
+                    Player.transform.eulerAngles = new Vector3(euler.x, Mathf.SmoothDampAngle(euler.y, transform.eulerAngles.y, ref currentVelocityY, 0.1f), euler.z);
                 }
             }
         }

@@ -104,7 +104,7 @@ namespace Assets.Scripts.GameEngine.Units
 
             Terrains.Terrain t = GameObject.FindObjectOfType<Terrains.Terrain>();
 
-            Name = string.Format("Player_{0}",GameObject.FindObjectsOfType<Assets.Scripts.GameEngine.Units.Player>().Length+8);
+            Name = string.Format("Player_{0}",GameObject.FindObjectsOfType<Assets.Scripts.GameEngine.Units.Player>().Length);
 
             transform.position = NewPosition = t.SpawnPoints[Random.Range(0, t.SpawnPoints.Count)].transform.position + new Vector3(0, .5f, 0);
 

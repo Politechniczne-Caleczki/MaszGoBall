@@ -20,6 +20,8 @@ namespace Assets.Scripts.States.GameStates
             GUIContainer.LoadingPanel.gameObject.SetActive(false);
             GUIContainer.GameMenu.gameObject.SetActive(false);
 
+            GameObject.FindObjectOfType<Assets.Scripts.GameEngine.Units.Camera>().enabled = true;
+
             Player = GameObject.FindObjectOfType<Player>();
             Player.enabled = true;
 

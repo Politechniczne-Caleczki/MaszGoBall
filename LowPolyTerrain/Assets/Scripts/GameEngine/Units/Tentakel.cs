@@ -68,7 +68,10 @@ namespace Assets.Scripts.GameEngine.Units
         {
             if (Nation)
             {
-                Nation.Rigidbody.AddForce(Quaternion.Euler(0, transform.parent.transform.eulerAngles.y, 0) * new Vector3(0, 1.5f, 1), ForceMode.Impulse);
+                Nation.Rigidbody.isKinematic = true;
+                Nation.Rigidbody.velocity = Vector3.zero;                
+                Nation.Rigidbody.isKinematic = false;
+                Nation.Rigidbody.AddForce(Quaternion.Euler(0, transform.parent.transform.eulerAngles.y, 0) * new Vector3(0, 1.5f, 4.5f), ForceMode.Impulse);
                 Nation.CmdShot();
                 Nation = null;
                 OnEndShot();
